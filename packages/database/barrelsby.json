@@ -1,0 +1,8 @@
+
+{
+  "directory": "./src",
+  "delete": true,
+  "exclude": ["__tests__", "__mocks__"],
+  "structure": "flat",
+  "barrelName": "index"
+}

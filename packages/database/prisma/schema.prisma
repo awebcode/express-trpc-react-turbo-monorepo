@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider                         = "zod-prisma-types"
+  output                           = "../prisma/generated/schemas"
+  useMultipleFiles                 = true
+  writeBarrelFiles                 = true
+  createInputTypes                 = true
+  createModelTypes                 = true
+  addInputTypeValidation           = true
+  addIncludeType                   = true
+  addSelectType                    = true
+  validateWhereUniqueInput         = true
+  createOptionalDefaultValuesTypes = true
+  createRelationValuesTypes        = true
+  createPartialTypes               = true
+  useDefaultValidators             = true
+  coerceDate                       = true
+  writeNullishInModelTypes         = true
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  passcode Int
+  posts    Post[]
+}
+
+model Post {
+  id      String @id @default(uuid())
+  title   String
+  content String
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+}

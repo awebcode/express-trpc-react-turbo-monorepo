@@ -1,0 +1,42 @@
+{
+  "name": "@repo/database",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:seed": "tsx src/seed.ts",
+    "dev": "tsup src/* --watch",
+    "format": "prisma format",
+    "generate": "prisma generate",
+    "lint": "eslint . --max-warnings 0",
+    "prebuild": "npm run generate",
+    "predev": "npm run generate",
+    "studio": "prisma studio",
+    "generate-barrels": "barrelsby --delete"
+  },
+  "dependencies": {
+    "@prisma/client": "latest",
+    "barrelsby": "^2.8.1",
+    "prisma-crud-generator": "^0.0.1",
+    "prisma-trpc-generator": "^1.4.1",
+    "prisma-zod-generator": "^1.0.1",
+    "zod": "^3.21.4",
+    "zod-prisma-types": "^3.2.4"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "eslint": "^8.57.0",
+    "prisma": "latest",
+    "reused": "^0.0.1",
+    "rimraf": "^5.0.5",
+    "tsup": "^8.0.2",
+    "tsx": "4.19.1",
+    "typescript": "latest"
+  }
+}
