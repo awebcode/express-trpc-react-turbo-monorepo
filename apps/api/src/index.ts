@@ -12,10 +12,9 @@ import swaggerUi from "swagger-ui-express";
 import { appRouter } from "./routers";
 import { createContext } from "./context";
 import { openApiDocument } from "./openapi";
-import { global_config } from "@repo/config";
+import { root_config } from "@repo/config";
 
 const app = express();
-
 // Setup CORS
 app.use(
   cors({
@@ -25,6 +24,7 @@ app.use(
 
 // Parse JSON bodies
 app.use(express.json());
+//root prefix v1
 
 // tRPC middleware
 app.use(
@@ -52,11 +52,13 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 // Health check
 app.get("/", (_req, res) => {
-  res.send("Hello from Express + tRPC!");
+  res.json({ status: "ok" });
 });
 
 // Start the server
-app.listen(global_config.api.port, () => {
-  console.log(`🚀 Server running on ${global_config.api.apiBaseUrl}`);
-  console.log(`📚 Swagger UI: ${global_config.api.trpcBaseUrl}/docs`);
+app.listen(root_config.port, () => {
+  console.log(`🚀 Server running on ${root_config.apiBaseUrl}`);
+  console.log(`📚 Swagger UI: ${root_config.trpcBaseUrl}`);
+  console.log(`📚 OpenAPI JSON: ${root_config.backendBaseUrl}/openapi.json`);
+  console.log(`📚 Docs: ${root_config.backendBaseUrl}/docs`);
 });

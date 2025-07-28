@@ -1,82 +1,40 @@
-//packages/config/index.ts
+// packages/config/index.ts
+import { env, isBackendEnv, isBrowser } from "./utils";
 
 import dotenv from "dotenv";
-import { env } from "./utils";
-const isBrowser = typeof window !== "undefined";
 
+// Load dotenv for server-side
+// Load dotenv for server-side
 if (!isBrowser) {
-  dotenv.config(); // Ensure .env is loaded before accessing process.env
+  dotenv.config(); // Load .env file in Node.js environments
 }
 
-/**
- * Centralized configuration for the application.
- */
-interface ApiConfig {
-  port: number;
+export interface Config {
+  nodeEnv: "development" | "production" | "test";
   isDev: boolean;
-  databaseUrl: string;
   backendBaseUrl: string;
   apiBaseUrl: string;
   trpcBaseUrl: string;
+  port?: number | undefined; // Backend-only
+  databaseUrl?: string | undefined; // Backend-only
 }
-
-interface WebConfig {
-  isDev: boolean;
-}
-
-interface AppConfig {
-  api: ApiConfig;
-  web: WebConfig;
-}
-
-// Map VITE_ prefixed variables to non-prefixed keys
-const getEnv = (key: string): string | undefined => {
-  if (isBrowser) {
-    return env[`APP_${key}`] || env[key];
-  }
-  return env[key];
+export const root_config: Config = {
+  nodeEnv: env.NODE_ENV,
+  isDev: env.NODE_ENV === "development",
+  backendBaseUrl: env.BACKEND_BASE_URL,
+  apiBaseUrl: env.API_BASE_URL || `${env.BACKEND_BASE_URL}/api`,
+  trpcBaseUrl: env.TRPC_BASE_URL || `${env.BACKEND_BASE_URL}/trpc`,
+  port: isBackendEnv(env) ? env.PORT : undefined,
+  databaseUrl: isBackendEnv(env) ? env.DATABASE_URL : undefined,
 };
 
-const backendBaseUrl = getEnv("BACKEND_BASE_URL") || "http://localhost:4000";
-const normalizedBackendBaseUrl = backendBaseUrl.replace(/\/$/, "");
+// Freeze config to prevent accidental modifications
+Object.freeze(root_config);
 
-const global_config: AppConfig = {
-  api: {
-    port: getEnv("PORT") as unknown as number,
-    isDev: (getEnv("NODE_ENV") || "development") === "development",
-    databaseUrl: getEnv("DATABASE_URL")!,
-    backendBaseUrl: normalizedBackendBaseUrl,
-    apiBaseUrl: getEnv("API_BASE_URL") || `${normalizedBackendBaseUrl}/api`,
-    trpcBaseUrl: getEnv("TRPC_BASE_URL") || `${normalizedBackendBaseUrl}/trpc`,
-  },
-  web: {
-    isDev: (getEnv("NODE_ENV") || "development") === "development",
-  },
-};
-
-Object.freeze(global_config.api);
-Object.freeze(global_config.web);
-Object.freeze(global_config);
-console.log({ global_config });
-
-if (!isBrowser && !global_config.api.databaseUrl) {
-  throw new Error("DATABASE_URL must be defined");
+// Utility to access config values
+export function getConfig<K extends keyof Config>(key: K): Config[K] {
+  return root_config[key];
 }
 
-if (!global_config.api.port && !isBrowser) {
-  throw new Error("PORT must be defined");
-}
-
-if (!global_config.api.backendBaseUrl) {
-  throw new Error("BACKEND_BASE_URL must be defined");
-}
-if (!global_config.api.apiBaseUrl) {
-  throw new Error("API_BASE_URL could not be derived");
-}
-if (!global_config.api.trpcBaseUrl) {
-  throw new Error("TRPC_BASE_URL could not be derived");
-}
-
-export { global_config };
-
-export type { ApiConfig, WebConfig, AppConfig };
+export { EnvSchema, type EnvSchemaType } from "./schema";
+export * from "./utils";
