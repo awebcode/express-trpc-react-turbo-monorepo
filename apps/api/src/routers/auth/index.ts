@@ -32,8 +32,10 @@ export const authRouter = createRouter({
       },
     })
     .input(z.void())
-    .output(z.string())
+    .output(z.object({ name: z.string() }))
     .query(async ({ ctx }) => {
-      return "Hello";
+      return {
+        name: "John Doe",
+      }
     }),
 });

@@ -1,12 +1,13 @@
 // utils/trpc.ts
-import { createTRPCReact } from '@trpc/react-query';
-import { QueryClient } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
-import type { AppRouter } from '@repo/api';
-import { root_config } from '@repo/config';
+import { createTRPCReact } from "@trpc/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "@repo/api";
+import { root_config } from "@repo/config";
 
 // Initialize tRPC client with React Query
 export const trpc = createTRPCReact<AppRouter>();
+
 
 // Create a QueryClient instance for React Query
 export const queryClient = new QueryClient({
